@@ -4,9 +4,8 @@ import Hotel from "../models/Hotel.js"
 
 export const createRoom = async (req , res , next)=>{
       
-      const hotelId = req.params.hotelId;
+      const hotelId = req.params.hotelid;
       const newRoom = new Room(req.body)
-
       try {
         const savedRoom = await newRoom.save();
         try {
@@ -35,6 +34,24 @@ export const updateRoom = async (req , res , next)=>{
          next(error);
     }
 }
+
+export const updateRoomAvailability = async (req , res , next)=>{
+    try {
+       await Room.updateOne(
+        {"roomNumbers._id": req.params.id},
+        {
+          $push:{
+            "roomNumbers.$.unavailableDates": req.body.dates
+          },
+       }
+    );
+    res.status(200).json("Room status has been updated.");
+    } catch (error) {
+         next(error);
+    }
+};
+
+
 
 export const getRoom = async (req , res , next)=>{
     try {
